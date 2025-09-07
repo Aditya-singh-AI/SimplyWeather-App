@@ -5,12 +5,14 @@ import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Suspense } from "react"
+import ServiceWorkerRegister from "@/components/service-worker-register"
 import "./globals.css"
 
 export const metadata: Metadata = {
   title: "Weather App",
   description: "Modern weather application with forecasts and location services",
-    generator: 'v0.app'
+  manifest: "/manifest.json",
+  generator: 'v0.app'
 }
 
 export default function RootLayout({
@@ -24,6 +26,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             {children}
+            <ServiceWorkerRegister />
           </ThemeProvider>
         </Suspense>
         <Analytics />

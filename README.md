@@ -59,8 +59,6 @@ Style theme: Update your CSS/Tailwind (if used) to customise colors, fonts, icon
 Deploy: Host on services like Vercel, Netlify, GitHub Pages — simply build and deploy the static site.
 
 📁 Project Structure
-bash
-Copy code
 /
 ├─ assets/images/           # Logos, icons, images
 ├─ public/                  # Static assets (maybe)

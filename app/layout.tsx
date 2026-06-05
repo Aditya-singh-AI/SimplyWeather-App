@@ -9,10 +9,17 @@ import ServiceWorkerRegister from "@/components/service-worker-register"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Weather App",
-  description: "Modern weather application with forecasts and location services",
+  title: "SimplyWeather — Beautiful Weather Forecasts",
+  description: "A stunning, real-time weather application with hourly forecasts, weather maps, air quality data, and smart alerts. Built with modern design.",
   manifest: "/manifest.json",
-  generator: 'v0.app'
+  keywords: ["weather", "forecast", "temperature", "rain", "air quality", "weather app"],
+  authors: [{ name: "SimplyWeather" }],
+  generator: 'v0.app',
+  openGraph: {
+    title: "SimplyWeather — Beautiful Weather Forecasts",
+    description: "Real-time weather with stunning visuals, 7-day forecasts, and smart alerts.",
+    type: "website",
+  },
 }
 
 export default function RootLayout({
@@ -22,9 +29,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
+      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
         <Suspense fallback={null}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
             {children}
             <ServiceWorkerRegister />
           </ThemeProvider>

@@ -124,6 +124,12 @@ export function useSettings() {
     [settings.show24HourTime],
   )
 
+  const toggleTemperatureUnit = useCallback(() => {
+    const newUnit = settings.temperatureUnit === "celsius" ? "fahrenheit" : "celsius"
+    const newSettings = { ...settings, temperatureUnit: newUnit }
+    saveSettings(newSettings)
+  }, [settings, saveSettings])
+
   return {
     settings,
     loading,
@@ -132,6 +138,7 @@ export function useSettings() {
     resetSettings,
     convertTemperature,
     getTemperatureSymbol,
+    toggleTemperatureUnit,
     formatTime,
   }
 }

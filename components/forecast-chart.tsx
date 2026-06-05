@@ -32,17 +32,19 @@ export function ForecastChart({ hourly, className }: ForecastChartProps) {
   }
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          {tempTrend >= 0 ? (
-            <TrendingUp className="h-5 w-5 text-green-500" />
-          ) : (
-            <TrendingDown className="h-5 w-5 text-red-500" />
-          )}
+    <Card className={`glass-card border-0 rounded-xl ${className}`}>
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-sm font-semibold">
+          <div className={`p-1.5 rounded-lg ${tempTrend >= 0 ? "bg-emerald-500/10" : "bg-rose-500/10"}`}>
+            {tempTrend >= 0 ? (
+              <TrendingUp className="h-4 w-4 text-emerald-500" />
+            ) : (
+              <TrendingDown className="h-4 w-4 text-rose-500" />
+            )}
+          </div>
           Temperature Trend
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-xs">
           Next 12 hours • {tempTrend >= 0 ? "Rising" : "Falling"} by {Math.abs(tempTrend).toFixed(1)}°
         </CardDescription>
       </CardHeader>
@@ -56,11 +58,11 @@ export function ForecastChart({ hourly, className }: ForecastChartProps) {
                   <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
+              <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 11 }}
                 domain={["dataMin - 2", "dataMax + 2"]}
               />
               <ChartTooltip content={<ChartTooltipContent />} labelFormatter={(value) => `Time: ${value}`} />

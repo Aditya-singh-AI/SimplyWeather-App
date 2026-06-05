@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { MapPin, Navigation, AlertCircle } from "lucide-react"
+import { MapPin, Navigation, AlertCircle, CloudSun, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -54,37 +54,60 @@ export function LocationPermission({ onLocationGranted, onSkip }: LocationPermis
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-            <MapPin className="h-8 w-8 text-primary" />
+    <div className="flex min-h-screen items-center justify-center p-4 relative overflow-hidden">
+      {/* Background */}
+      <div className="hero-gradient-bg" />
+      <div className="hero-mesh-overlay" />
+
+      <Card className="relative z-10 w-full max-w-md bg-white/[0.07] backdrop-blur-xl border-white/[0.1] rounded-3xl shadow-2xl">
+        {/* Glow effect */}
+        <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-purple-500/20 via-transparent to-blue-500/20 blur-xl -z-10" />
+
+        <CardHeader className="text-center pb-4 pt-8">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/15 border border-accent/20 animate-float">
+            <MapPin className="h-8 w-8 text-accent" />
           </div>
-          <CardTitle className="text-xl">Enable Location Access</CardTitle>
-          <CardDescription>Get accurate weather information for your current location</CardDescription>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 mx-auto mb-3">
+            <CloudSun className="h-3.5 w-3.5 text-amber-400" />
+            <span className="text-xs text-white/70">SimplyWeather</span>
+            <Sparkles className="h-3 w-3 text-purple-400" />
+          </div>
+          <CardTitle className="text-xl text-white">Enable Location Access</CardTitle>
+          <CardDescription className="text-white/50">
+            Get accurate weather information for your current location
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pb-8">
           {error && (
-            <Alert>
+            <Alert className="bg-red-500/10 border-red-500/20 text-red-400">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
+              <AlertDescription className="text-sm">{error}</AlertDescription>
             </Alert>
           )}
 
           <div className="space-y-3">
-            <Button onClick={requestLocation} disabled={loading} className="w-full" size="lg">
+            <Button
+              onClick={requestLocation}
+              disabled={loading}
+              className="w-full h-12 text-sm font-semibold rounded-2xl bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white shadow-lg shadow-purple-500/25 transition-all duration-300 hover:shadow-xl border-0"
+              size="lg"
+            >
               <Navigation className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               {loading ? "Getting Location..." : "Use Current Location"}
             </Button>
 
-            <Button onClick={onSkip} variant="outline" className="w-full bg-transparent" size="lg">
+            <Button
+              onClick={onSkip}
+              variant="outline"
+              className="w-full h-11 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] text-white/70 hover:text-white border-white/[0.1] transition-all"
+              size="lg"
+            >
               Search Manually
             </Button>
           </div>
 
-          <div className="text-center text-sm text-muted-foreground">
-            <p>We use your location to provide accurate weather forecasts.</p>
-            <p className="mt-1">Your location data is not stored or shared.</p>
+          <div className="text-center text-xs text-white/30 pt-2">
+            <p>Your location data is not stored or shared.</p>
           </div>
         </CardContent>
       </Card>

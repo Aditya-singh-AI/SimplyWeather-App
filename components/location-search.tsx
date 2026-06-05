@@ -90,58 +90,60 @@ export function LocationSearch({ onLocationSelect, currentLocation }: LocationSe
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsOpen(true)}
-          className="pl-10 pr-12"
+          className="pl-10 pr-12 h-9 rounded-xl bg-muted/30 border-border/50 focus:border-accent/50 focus:ring-accent/20 transition-all text-sm"
         />
         <Button
           size="sm"
           variant="ghost"
           onClick={getCurrentLocation}
           disabled={loading}
-          className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 p-0"
+          className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 p-0 rounded-lg hover:bg-accent/10"
           title="Use current location"
         >
-          <Navigation className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          <Navigation className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
         </Button>
       </div>
 
       {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
 
       {isOpen && (
-        <Card className="absolute top-full z-50 mt-1 w-full">
+        <Card className="absolute top-full z-50 mt-1.5 w-full glass-card border-0 rounded-xl shadow-2xl overflow-hidden">
           <CardContent className="p-0">
             {/* Current Location */}
             {currentLocation && (
               <div
                 onClick={handleCurrentLocationSelect}
-                className="flex cursor-pointer items-center gap-3 border-b p-3 hover:bg-muted/50"
+                className="flex cursor-pointer items-center gap-3 border-b border-border/30 p-3 hover:bg-accent/5 transition-colors"
               >
-                <Navigation className="h-4 w-4 text-primary" />
+                <div className="p-1.5 rounded-lg bg-accent/10">
+                  <Navigation className="h-3.5 w-3.5 text-accent" />
+                </div>
                 <div className="flex-1">
-                  <p className="font-medium">Current Location</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm font-medium">Current Location</p>
+                  <p className="text-xs text-muted-foreground">
                     {currentLocation.lat.toFixed(2)}, {currentLocation.lon.toFixed(2)}
                   </p>
                 </div>
-                <Badge variant="secondary">GPS</Badge>
+                <Badge variant="secondary" className="text-[10px] bg-accent/10 text-accent border-accent/20">GPS</Badge>
               </div>
             )}
 
             {/* Saved Locations */}
             {savedLocations.length > 0 && (
-              <div className="border-b">
-                <div className="p-2">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Saved Locations</p>
+              <div className="border-b border-border/30">
+                <div className="px-3 pt-2 pb-1">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Saved</p>
                 </div>
                 {savedLocations.map((location) => (
                   <div
                     key={`${location.lat}-${location.lon}`}
                     onClick={() => handleLocationSelect(location)}
-                    className="flex cursor-pointer items-center gap-3 p-3 hover:bg-muted/50"
+                    className="flex cursor-pointer items-center gap-3 p-3 hover:bg-accent/5 transition-colors"
                   >
-                    <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                    <div className="flex-1">
-                      <p className="font-medium">{location.name}</p>
-                      <p className="text-sm text-muted-foreground">
+                    <Star className="h-3.5 w-3.5 text-amber-500 fill-current shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{location.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">
                         {location.state && `${location.state}, `}
                         {location.country}
                       </p>
@@ -150,7 +152,7 @@ export function LocationSearch({ onLocationSelect, currentLocation }: LocationSe
                       size="sm"
                       variant="ghost"
                       onClick={(e) => handleRemoveLocation(location, e)}
-                      className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                      className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive rounded-lg"
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>
@@ -163,24 +165,29 @@ export function LocationSearch({ onLocationSelect, currentLocation }: LocationSe
             {query.trim() && (
               <div>
                 {searchLoading ? (
-                  <div className="p-3 text-center text-sm text-muted-foreground">Searching...</div>
+                  <div className="p-4 text-center">
+                    <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+                      <div className="w-3.5 h-3.5 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+                      Searching...
+                    </div>
+                  </div>
                 ) : searchResults.length > 0 ? (
                   <>
-                    <div className="p-2">
-                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                        Search Results
+                    <div className="px-3 pt-2 pb-1">
+                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                        Results
                       </p>
                     </div>
                     {searchResults.map((location) => (
                       <div
                         key={`${location.lat}-${location.lon}`}
                         onClick={() => handleLocationSelect(location)}
-                        className="flex cursor-pointer items-center gap-3 p-3 hover:bg-muted/50"
+                        className="flex cursor-pointer items-center gap-3 p-3 hover:bg-accent/5 transition-colors"
                       >
-                        <MapPin className="h-4 w-4 text-muted-foreground" />
-                        <div className="flex-1">
-                          <p className="font-medium">{location.name}</p>
-                          <p className="text-sm text-muted-foreground">
+                        <MapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{location.name}</p>
+                          <p className="text-xs text-muted-foreground truncate">
                             {location.state && `${location.state}, `}
                             {location.country}
                           </p>
@@ -190,23 +197,23 @@ export function LocationSearch({ onLocationSelect, currentLocation }: LocationSe
                           variant="ghost"
                           onClick={(e) => handleSaveLocation(location, e)}
                           disabled={isLocationSaved(location)}
-                          className="h-8 w-8 p-0"
+                          className="h-7 w-7 p-0 rounded-lg"
                         >
                           <Star
-                            className={`h-3 w-3 ${isLocationSaved(location) ? "text-yellow-500 fill-current" : "text-muted-foreground"}`}
+                            className={`h-3 w-3 ${isLocationSaved(location) ? "text-amber-500 fill-current" : "text-muted-foreground"}`}
                           />
                         </Button>
                       </div>
                     ))}
                   </>
                 ) : (
-                  <div className="p-3 text-center text-sm text-muted-foreground">No locations found</div>
+                  <div className="p-4 text-center text-sm text-muted-foreground">No locations found</div>
                 )}
               </div>
             )}
 
             {!query.trim() && savedLocations.length === 0 && !currentLocation && (
-              <div className="p-3 text-center text-sm text-muted-foreground">
+              <div className="p-4 text-center text-sm text-muted-foreground">
                 Search for a city or use your current location
               </div>
             )}

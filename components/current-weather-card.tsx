@@ -34,72 +34,86 @@ export function CurrentWeatherCard({ weather, location }: CurrentWeatherCardProp
   })
 
   return (
-    <Card className="overflow-hidden shadow-2xl border-0 bg-gradient-to-br from-card via-card to-card/80 backdrop-blur-sm">
-      <CardContent className="p-8">
-        <div className="flex items-center justify-between mb-6">
+    <Card className="overflow-hidden shadow-2xl border-0 glass-card rounded-2xl">
+      {/* Subtle gradient accent at top */}
+      <div className="h-1 bg-gradient-to-r from-accent/60 via-purple-400/40 to-blue-500/60" />
+
+      <CardContent className="p-4 sm:p-6 md:p-8">
+        {/* Date & time header */}
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div>
-            <p className="text-lg font-medium text-foreground">{currentDate}</p>
-            <p className="text-sm text-muted-foreground">{currentTime}</p>
+            <p className="text-xs sm:text-sm font-medium text-foreground">{currentDate}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{currentTime}</p>
           </div>
           <Badge
             variant={isDay ? "default" : "secondary"}
-            className={`${isDay ? "bg-amber-500 text-white" : "bg-slate-600 text-white"} animate-pulse-glow`}
+            className={`${
+              isDay
+                ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                : "bg-slate-500/15 text-slate-600 dark:text-slate-400 border-slate-500/20"
+            } text-xs font-medium`}
           >
-            {isDay ? "Day" : "Night"}
+            {isDay ? "☀️ Day" : "🌙 Night"}
           </Badge>
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="space-y-4">
-            <div className="flex items-baseline gap-3">
-              <span className="text-8xl font-extralight tracking-tighter bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+        {/* Main temperature display */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="space-y-2 sm:space-y-3">
+            {/* Temperature */}
+            <div className="flex items-baseline gap-2">
+              <span className="text-6xl sm:text-7xl md:text-8xl font-extralight tracking-tighter gradient-text">
                 {displayTemp}
               </span>
-              <span className="text-3xl text-muted-foreground font-light">{tempSymbol}</span>
+              <span className="text-xl sm:text-2xl text-muted-foreground font-light">{tempSymbol}</span>
             </div>
 
-            <div className="space-y-3">
-              <p className="text-2xl font-semibold capitalize text-balance">{weather.weather_description}</p>
-              <div className="flex items-center gap-6 text-base text-muted-foreground">
-                <span className="flex items-center gap-2">
-                  <Thermometer className="h-5 w-5" />
-                  Feels like {displayFeelsLike}
-                  {tempSymbol}
+            {/* Description */}
+            <div className="space-y-1.5 sm:space-y-2">
+              <p className="text-lg sm:text-xl font-semibold capitalize">{weather.weather_description}</p>
+              <div className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs sm:text-sm text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <Thermometer className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-accent/70" />
+                  Feels like {displayFeelsLike}{tempSymbol}
                 </span>
-                <span className="flex items-center gap-2">
-                  <Droplets className="h-5 w-5" />
+                <span className="flex items-center gap-1.5">
+                  <Droplets className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-400/70" />
                   {weather.humidity}%
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="text-center">
-            <div className="text-9xl mb-4 animate-float filter drop-shadow-2xl">{weatherIcon}</div>
+          {/* Weather icon */}
+          <div className="text-center shrink-0 self-center sm:self-auto">
+            <div className="text-6xl sm:text-7xl md:text-8xl animate-float filter drop-shadow-xl select-none">
+              {weatherIcon}
+            </div>
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-3 gap-6 pt-6 border-t border-border/50">
-          <div className="text-center group hover:bg-muted/50 rounded-lg p-3 transition-colors">
-            <div className="flex items-center justify-center mb-2">
-              <Wind className="h-5 w-5 text-accent" />
+        {/* Bottom stats row */}
+        <div className="mt-6 sm:mt-8 grid grid-cols-3 gap-2 sm:gap-4 pt-4 sm:pt-6 border-t border-border/30">
+          <div className="text-center group rounded-xl p-3 hover:bg-muted/30 transition-all duration-300 cursor-default">
+            <div className="flex items-center justify-center mb-1.5">
+              <Wind className="h-4 w-4 text-accent/70 group-hover:text-accent transition-colors" />
             </div>
-            <p className="text-3xl font-bold text-foreground">{Math.round(weather.wind_speed)}</p>
-            <p className="text-sm text-muted-foreground font-medium">km/h wind</p>
+            <p className="text-xl sm:text-2xl font-bold text-foreground">{Math.round(weather.wind_speed)}</p>
+            <p className="text-xs text-muted-foreground font-medium">km/h wind</p>
           </div>
-          <div className="text-center group hover:bg-muted/50 rounded-lg p-3 transition-colors">
-            <div className="flex items-center justify-center mb-2">
-              <Eye className="h-5 w-5 text-accent" />
+          <div className="text-center group rounded-xl p-3 hover:bg-muted/30 transition-all duration-300 cursor-default">
+            <div className="flex items-center justify-center mb-1.5">
+              <Eye className="h-4 w-4 text-accent/70 group-hover:text-accent transition-colors" />
             </div>
-            <p className="text-3xl font-bold text-foreground">{weather.visibility}</p>
-            <p className="text-sm text-muted-foreground font-medium">km visibility</p>
+            <p className="text-xl sm:text-2xl font-bold text-foreground">{weather.visibility}</p>
+            <p className="text-xs text-muted-foreground font-medium">km visibility</p>
           </div>
-          <div className="text-center group hover:bg-muted/50 rounded-lg p-3 transition-colors">
-            <div className="flex items-center justify-center mb-2">
-              <Gauge className="h-5 w-5 text-accent" />
+          <div className="text-center group rounded-xl p-3 hover:bg-muted/30 transition-all duration-300 cursor-default">
+            <div className="flex items-center justify-center mb-1.5">
+              <Gauge className="h-4 w-4 text-accent/70 group-hover:text-accent transition-colors" />
             </div>
-            <p className="text-3xl font-bold text-foreground">{weather.pressure}</p>
-            <p className="text-sm text-muted-foreground font-medium">hPa pressure</p>
+            <p className="text-xl sm:text-2xl font-bold text-foreground">{weather.pressure}</p>
+            <p className="text-xs text-muted-foreground font-medium">hPa pressure</p>
           </div>
         </div>
       </CardContent>

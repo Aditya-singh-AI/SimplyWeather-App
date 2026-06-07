@@ -40,7 +40,7 @@ yarn install
 npm install
 
 # Set up your API key
-# (e.g., create a .env file with WEATHER_API_KEY=<your_key>)
+# (e.g., create a .env file with NEXT_PUBLIC_OPENWEATHER_API_KEY=<your_key>)
 
 # Run the development server
 yarn dev

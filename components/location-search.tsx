@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Search, MapPin, Star, Trash2, Navigation } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -19,6 +19,7 @@ interface LocationSearchProps {
 export function LocationSearch({ onLocationSelect, currentLocation }: LocationSearchProps) {
   const [query, setQuery] = useState("")
   const [isOpen, setIsOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const {
     savedLocations,
@@ -45,6 +46,22 @@ export function LocationSearch({ onLocationSelect, currentLocation }: LocationSe
 
     return () => clearTimeout(timer)
   }, [query, searchLocation])
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [isOpen])
 
   const handleLocationSelect = (location: LocationData) => {
     const userLocation: UserLocation = {
@@ -81,7 +98,7 @@ export function LocationSearch({ onLocationSelect, currentLocation }: LocationSe
   }
 
   return (
-    <div className="relative w-full max-w-md">
+    <div ref={containerRef} className="relative w-full max-w-md">
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input

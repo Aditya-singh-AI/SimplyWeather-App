@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getCurrentWeather } from "@/lib/weather-api-server"
 
+export const dynamic = "force-dynamic"
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const lat = searchParams.get("lat")

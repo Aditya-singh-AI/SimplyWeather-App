@@ -125,7 +125,7 @@ export function useSettings() {
   )
 
   const toggleTemperatureUnit = useCallback(() => {
-    const newUnit = settings.temperatureUnit === "celsius" ? "fahrenheit" : "celsius"
+    const newUnit: "celsius" | "fahrenheit" = settings.temperatureUnit === "celsius" ? "fahrenheit" : "celsius"
     const newSettings = { ...settings, temperatureUnit: newUnit }
     saveSettings(newSettings)
   }, [settings, saveSettings])

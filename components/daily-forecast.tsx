@@ -2,9 +2,8 @@
 
 import { Calendar, Sunrise, Sunset } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
 import { getWeatherIcon } from "@/lib/weather-api"
+import { useSettings } from "@/hooks/use-settings"
 import type { WeatherData } from "@/lib/weather-api"
 
 interface DailyForecastProps {
@@ -13,16 +12,12 @@ interface DailyForecastProps {
 }
 
 export function DailyForecast({ daily, className }: DailyForecastProps) {
-  const formatDate = (dateString: string, index: number) => {
-    const date = new Date(dateString)
-    const today = new Date()
-    const tomorrow = new Date(today)
-    tomorrow.setDate(today.getDate() + 1)
+  const { convertTemperature } = useSettings()
 
+  const formatDate = (dateString: string, index: number) => {
     if (index === 0) return "Today"
     if (index === 1) return "Tomorrow"
-
-    return date.toLocaleDateString([], { weekday: "long", month: "short", day: "numeric" })
+    return new Date(dateString).toLocaleDateString([], { weekday: "long", month: "short", day: "numeric" })
   }
 
   const formatTime = (timeString: string) => {
@@ -30,46 +25,49 @@ export function DailyForecast({ daily, className }: DailyForecastProps) {
   }
 
   const getTempRange = () => {
-    const allTemps = daily.flatMap((day) => [day.temp_max, day.temp_min])
-    return {
-      min: Math.min(...allTemps),
-      max: Math.max(...allTemps),
-    }
+    const allTemps = daily.flatMap((day) => [convertTemperature(day.temp_max), convertTemperature(day.temp_min)])
+    return { min: Math.min(...allTemps), max: Math.max(...allTemps) }
   }
 
   const tempRange = getTempRange()
+  const range = tempRange.max - tempRange.min || 1
 
   return (
-    <Card className={`glass-card border-0 rounded-xl ${className}`}>
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-          <div className="p-1.5 rounded-lg bg-accent/10">
+    <Card className={`glass-card border-0 rounded-2xl overflow-hidden ${className}`}>
+      <CardHeader className="pb-3 px-4 sm:px-6">
+        <CardTitle className="flex items-center gap-2.5 text-sm font-semibold">
+          <div className="p-1.5 rounded-xl bg-accent/10">
             <Calendar className="h-4 w-4 text-accent" />
           </div>
           7-Day Forecast
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-1.5">
+      <CardContent className="px-2 sm:px-4">
+        <div className="space-y-1">
           {daily.map((day, index) => {
             const isToday = index === 0
             const weatherIcon = getWeatherIcon(day.weather_code, true)
+            const maxTemp = convertTemperature(day.temp_max)
+            const minTemp = convertTemperature(day.temp_min)
+
+            const barLeft = ((minTemp - tempRange.min) / range) * 100
+            const barRight = 100 - ((maxTemp - tempRange.min) / range) * 100
 
             return (
               <div
                 key={index}
-                className={`flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl transition-all duration-300 cursor-default ${
+                className={`flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl transition-all duration-300 cursor-default ${
                   isToday
-                    ? "bg-accent/8 border border-accent/15"
-                    : "hover:bg-muted/30"
+                    ? "bg-accent/8 border border-accent/15 shadow-sm"
+                    : "hover:bg-muted/20"
                 }`}
-                style={{ animationDelay: `${index * 60}ms` }}
+                style={{ animationDelay: `${index * 50}ms` }}
               >
-                {/* Date and Weather Icon */}
-                <div className="flex items-center gap-2 shrink-0">
+                {/* Icon + Date */}
+                <div className="flex items-center gap-2.5 min-w-[130px] sm:min-w-[160px] shrink-0">
                   <div className="text-xl sm:text-2xl select-none">{weatherIcon}</div>
                   <div className="min-w-0">
-                    <p className={`text-xs sm:text-sm font-medium truncate ${isToday ? "text-accent" : ""}`}>
+                    <p className={`text-xs sm:text-sm font-semibold truncate ${isToday ? "text-accent" : ""}`}>
                       {formatDate(day.date, index)}
                       {isToday && (
                         <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent ml-1.5 animate-pulse" />
@@ -82,26 +80,22 @@ export function DailyForecast({ daily, className }: DailyForecastProps) {
                   </div>
                 </div>
 
-                {/* Temperature Range */}
+                {/* Temperature Range Bar */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs sm:text-sm font-bold">{day.temp_max}°</span>
-                    <span className="text-xs sm:text-sm text-muted-foreground">{day.temp_min}°</span>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs sm:text-sm text-muted-foreground font-medium">{minTemp}°</span>
+                    <span className="text-xs sm:text-sm font-bold">{maxTemp}°</span>
                   </div>
-                  <div className="relative h-1 sm:h-1.5 rounded-full bg-muted/50 overflow-hidden">
-                    {/* Temperature range bar */}
+                  <div className="relative h-1.5 sm:h-2 rounded-full bg-muted/30 overflow-hidden">
                     <div
-                      className="absolute h-full rounded-full bg-gradient-to-r from-blue-400 via-accent to-orange-400"
-                      style={{
-                        left: `${((day.temp_min - tempRange.min) / (tempRange.max - tempRange.min)) * 100}%`,
-                        right: `${100 - ((day.temp_max - tempRange.min) / (tempRange.max - tempRange.min)) * 100}%`,
-                      }}
+                      className="absolute h-full rounded-full bg-gradient-to-r from-blue-400 via-emerald-400 via-amber-400 to-orange-500 transition-all duration-700"
+                      style={{ left: `${barLeft}%`, right: `${barRight}%` }}
                     />
                   </div>
                 </div>
 
-                {/* Sunrise/Sunset (desktop only) */}
-                <div className="hidden lg:flex items-center gap-3 text-xs text-muted-foreground">
+                {/* Sunrise/Sunset (desktop) */}
+                <div className="hidden lg:flex items-center gap-4 text-xs text-muted-foreground shrink-0">
                   <div className="flex items-center gap-1">
                     <Sunrise className="h-3 w-3 text-amber-500/70" />
                     <span>{formatTime(day.sunrise)}</span>

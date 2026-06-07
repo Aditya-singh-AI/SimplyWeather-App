@@ -33,14 +33,23 @@ export function CurrentWeatherCard({ weather, location }: CurrentWeatherCardProp
     minute: "2-digit",
   })
 
-  return (
-    <Card className="overflow-hidden shadow-2xl border-0 glass-card rounded-2xl">
-      {/* Subtle gradient accent at top */}
-      <div className="h-1 bg-gradient-to-r from-accent/60 via-purple-400/40 to-blue-500/60" />
+  const getTempColor = (temp: number) => {
+    if (temp >= 35) return "temp-hot"
+    if (temp >= 25) return "temp-warm"
+    if (temp >= 15) return "temp-mild"
+    if (temp >= 5) return "temp-cool"
+    if (temp >= -5) return "temp-cold"
+    return "temp-freezing"
+  }
 
-      <CardContent className="p-4 sm:p-6 md:p-8">
-        {/* Date & time header */}
-        <div className="flex items-center justify-between mb-4 sm:mb-6">
+  return (
+    <Card className="overflow-hidden shadow-2xl border-0 glass-card rounded-3xl glass-card-glow">
+      {/* Gradient accent */}
+      <div className="h-1 bg-gradient-to-r from-violet-500/60 via-purple-400/40 to-blue-500/60" />
+
+      <CardContent className="p-5 sm:p-7 md:p-10">
+        {/* Date & Badge */}
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
           <div>
             <p className="text-xs sm:text-sm font-medium text-foreground">{currentDate}</p>
             <p className="text-xs text-muted-foreground mt-0.5">{currentTime}</p>
@@ -50,71 +59,69 @@ export function CurrentWeatherCard({ weather, location }: CurrentWeatherCardProp
             className={`${
               isDay
                 ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20"
-                : "bg-slate-500/15 text-slate-600 dark:text-slate-400 border-slate-500/20"
-            } text-xs font-medium`}
+                : "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"
+            } text-xs font-medium px-3 py-1 rounded-full`}
           >
-            {isDay ? "☀️ Day" : "🌙 Night"}
+            {isDay ? "☀️ Daytime" : "🌙 Nighttime"}
           </Badge>
         </div>
 
-        {/* Main temperature display */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="space-y-2 sm:space-y-3">
-            {/* Temperature */}
-            <div className="flex items-baseline gap-2">
-              <span className="text-6xl sm:text-7xl md:text-8xl font-extralight tracking-tighter gradient-text">
+        {/* Main temp + icon */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div className="space-y-3">
+            {/* Giant temperature */}
+            <div className="flex items-start gap-1">
+              <span className={`text-7xl sm:text-8xl md:text-[120px] temp-display ${getTempColor(weather.temp)} animate-counter-up`}>
                 {displayTemp}
               </span>
-              <span className="text-xl sm:text-2xl text-muted-foreground font-light">{tempSymbol}</span>
+              <span className="text-2xl sm:text-3xl text-muted-foreground font-extralight mt-2 sm:mt-4">{tempSymbol}</span>
             </div>
 
             {/* Description */}
-            <div className="space-y-1.5 sm:space-y-2">
+            <div className="space-y-2">
               <p className="text-lg sm:text-xl font-semibold capitalize">{weather.weather_description}</p>
-              <div className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs sm:text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
-                  <Thermometer className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-accent/70" />
+                  <Thermometer className="h-3.5 w-3.5 text-rose-400/70" />
                   Feels like {displayFeelsLike}{tempSymbol}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Droplets className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-400/70" />
-                  {weather.humidity}%
+                  <Droplets className="h-3.5 w-3.5 text-blue-400/70" />
+                  {weather.humidity}% humidity
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Weather icon */}
-          <div className="text-center shrink-0 self-center sm:self-auto">
-            <div className="text-6xl sm:text-7xl md:text-8xl animate-float filter drop-shadow-xl select-none">
+          {/* Animated weather icon */}
+          <div className="weather-icon-container shrink-0 self-center">
+            <div className="text-7xl sm:text-8xl md:text-9xl animate-float filter drop-shadow-2xl select-none">
               {weatherIcon}
             </div>
           </div>
         </div>
 
-        {/* Bottom stats row */}
-        <div className="mt-6 sm:mt-8 grid grid-cols-3 gap-2 sm:gap-4 pt-4 sm:pt-6 border-t border-border/30">
-          <div className="text-center group rounded-xl p-3 hover:bg-muted/30 transition-all duration-300 cursor-default">
-            <div className="flex items-center justify-center mb-1.5">
-              <Wind className="h-4 w-4 text-accent/70 group-hover:text-accent transition-colors" />
+        {/* Bottom stats */}
+        <div className="mt-8 sm:mt-10 grid grid-cols-3 gap-3 pt-6 border-t border-border/20">
+          {[
+            { icon: <Wind className="h-4 w-4" />, value: Math.round(weather.wind_speed), unit: "km/h", label: "Wind Speed" },
+            { icon: <Eye className="h-4 w-4" />, value: weather.visibility, unit: "km", label: "Visibility" },
+            { icon: <Gauge className="h-4 w-4" />, value: weather.pressure, unit: "hPa", label: "Pressure" },
+          ].map((stat) => (
+            <div
+              key={stat.label}
+              className="text-center group rounded-2xl p-3 sm:p-4 hover:bg-muted/20 transition-all duration-300 cursor-default"
+            >
+              <div className="flex items-center justify-center mb-2">
+                <div className="text-accent/60 group-hover:text-accent transition-colors">{stat.icon}</div>
+              </div>
+              <p className="text-xl sm:text-2xl font-semibold text-foreground">
+                {stat.value}
+                <span className="text-xs text-muted-foreground ml-0.5">{stat.unit}</span>
+              </p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground font-medium mt-0.5">{stat.label}</p>
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-foreground">{Math.round(weather.wind_speed)}</p>
-            <p className="text-xs text-muted-foreground font-medium">km/h wind</p>
-          </div>
-          <div className="text-center group rounded-xl p-3 hover:bg-muted/30 transition-all duration-300 cursor-default">
-            <div className="flex items-center justify-center mb-1.5">
-              <Eye className="h-4 w-4 text-accent/70 group-hover:text-accent transition-colors" />
-            </div>
-            <p className="text-xl sm:text-2xl font-bold text-foreground">{weather.visibility}</p>
-            <p className="text-xs text-muted-foreground font-medium">km visibility</p>
-          </div>
-          <div className="text-center group rounded-xl p-3 hover:bg-muted/30 transition-all duration-300 cursor-default">
-            <div className="flex items-center justify-center mb-1.5">
-              <Gauge className="h-4 w-4 text-accent/70 group-hover:text-accent transition-colors" />
-            </div>
-            <p className="text-xl sm:text-2xl font-bold text-foreground">{weather.pressure}</p>
-            <p className="text-xs text-muted-foreground font-medium">hPa pressure</p>
-          </div>
+          ))}
         </div>
       </CardContent>
     </Card>
